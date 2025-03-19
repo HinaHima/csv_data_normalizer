@@ -1,16 +1,23 @@
 const std = @import("std");
 
-fn parseCSVRows(csvData: []const u8) !void {
+fn parseCSVRows(csvData: []const u8) ![]?[]const u8 {
     const allocator = std.heap.page_allocator;
 
-    const rows = std.ArrayList(?[*]u8).init(allocator);
+    var rows = std.ArrayList(?[]const u8).init(allocator);
     rows.deinit();
 
+    var counter: usize = 0;
+
     for (csvData, 0..) |v, i| {
-        _ = v; // autofix
-        _ = i; // autofix
-        std.debug.print("The first row is {any}\n", .{rows.getLastOrNull()});
+        if (v == '\n') {
+            try rows.append(csvData[counter..i]);
+            counter = i + 1;
+        } else if (i == csvData.len - 1) {
+            try rows.append(csvData[counter..]);
+        }
     }
+
+    return rows.toOwnedSlice();
 }
 
 pub fn isCSV(fileName: []const u8) !bool {
@@ -27,7 +34,7 @@ pub fn isCSV(fileName: []const u8) !bool {
 
     _ = try file.readAll(buffer);
 
-    try parseCSVRows(buffer);
+    _ = try parseCSVRows(buffer);
 
     return true;
 }
