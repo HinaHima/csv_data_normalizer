@@ -1,6 +1,6 @@
 const std = @import("std");
 const csvWritter = @import("csv_writter.zig").csvWritter;
-const isCSV = @import("isCSV.zig").isCSV;
+const parseCSV = @import("isCSV.zig").parseCSV;
 
 // fn isCSV(cwd: std.fs.Dir, filename: []const u8) bool {
 //     const fileContent = cwd.readFileAlloc(std.heap.page_allocator, filename, 1024);
@@ -25,7 +25,7 @@ pub fn main() !void {
 
     const writeCsv = try csvWritter(fileName);
     _ = writeCsv; // autofix
-    const ensureCSV = try isCSV(fileName);
+    const ensureCSV = try parseCSV(fileName);
     _ = ensureCSV; // autofix
 
     // var iter = cwd.iterate();
